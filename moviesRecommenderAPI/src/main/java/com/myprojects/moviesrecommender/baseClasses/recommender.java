@@ -7,6 +7,7 @@ package com.myprojects.moviesrecommender.baseClasses;
 import com.myprojects.moviesrecommender.mysql.moviesJDBCTemplate;
 import com.myprojects.moviesrecommender.mysql.ratingJDBCTemplate;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,8 +27,7 @@ public class recommender {
     private static int numThreads = 10;
     ExecutorService executorService;
 
-    public recommender(String userId, moviesJDBCTemplate moviesDataFetcher, ratingJDBCTemplate ratingDataFetcher) {
-        this.userId = userId;
+    public recommender(moviesJDBCTemplate moviesDataFetcher, ratingJDBCTemplate ratingDataFetcher) {
         this.moviesDataFetcher = moviesDataFetcher;
         this.ratingDataFetcher = ratingDataFetcher;
     }
@@ -48,22 +48,18 @@ public class recommender {
             }
         }
         List<movie> moviesRated = moviesDataFetcher.getMoviesIn(shortlistedMovieIds);
-        List<movie> moviesNotRated = moviesDataFetcher.getMoviesNotIn(movieIds, 50);
+        List<movie> moviesNotRated = moviesDataFetcher.getMoviesNotIn(movieIds, 10);
         HashSet<Integer> set = new HashSet<Integer>();
-        System.err.println("Genres liked by user:");
         for (movie m : moviesRated) {
             int[] g = m.getGenres();
             for (int i = 0; i < g.length; i++) {
-                System.err.println(m.getAllGenres());
                 set.add(g[i]);
             }
         }
-        System.err.println("Genres recommended to user:");
         for(movie m : moviesNotRated) {
             int[] g = m.getGenres();
             for (int i = 0; i < g.length; i++) {
                 if(set.contains(g[i])) {
-                    System.err.println(m.getAllGenres());
                     recommendedMovies.add(m);
                 }
             }
@@ -71,10 +67,11 @@ public class recommender {
         return recommendedMovies;
     }
 
-    public List<movie> recommend() {
-        executorService = Executors.newFixedThreadPool(10);
+    public List<movie> recommend(String userId) {
+        this.userId = userId;
         List<rating> ratings = ratingDataFetcher.getRatingByUser(userId);
         Collections.sort(ratings);
-        return getRecommendations(ratings);
+        List<movie> recos = getRecommendations(ratings);
+        return recos;
     }
 }

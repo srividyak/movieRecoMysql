@@ -39,6 +39,10 @@ public class moviesJDBCTemplate extends dataSourceTemplate implements MoviesDAO 
         return movies;
     }
     
+    private long roundoff(long offset) {
+        return offset - offset % 10;
+    }
+    
     /**
      * get movies from movies table where movieid in/not in ids
      * @param ids list of ids
@@ -60,11 +64,11 @@ public class moviesJDBCTemplate extends dataSourceTemplate implements MoviesDAO 
             if(numRecords > 0) {
                 Random r = new Random();
                 long offset = r.nextLong() % totalMoviesInDB;
-                if(offset + numRecords > totalMoviesInDB) {
+                if(offset + numRecords >= totalMoviesInDB) {
                     offset -= numRecords;
-                    offset = (offset < 0) ? 0 : offset;
                 }
-                sqlIn += " limit " + offset + " ," + numRecords;
+                offset = (offset < 0) ? 0 : offset;
+                sqlIn += " limit " + roundoff(offset) + " ," + numRecords;
             }
             movies = jdbcTemplateObject.query(sqlIn, ids.toArray(), new movieMapper());
         }

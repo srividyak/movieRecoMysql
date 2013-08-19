@@ -30,9 +30,8 @@
     </bean>
     
     <bean id="recommender" class="com.myprojects.moviesrecommender.baseClasses.recommender">
-        <constructor-arg index="0" value="2"></constructor-arg>
-        <constructor-arg index="1" ref="moviesJDBCTemplate"/>
-        <constructor-arg index="2" ref="ratingJDBCTemplate"/>
+        <constructor-arg index="0" ref="moviesJDBCTemplate"/>
+        <constructor-arg index="1" ref="ratingJDBCTemplate"/>
     </bean>
 
 </beans>

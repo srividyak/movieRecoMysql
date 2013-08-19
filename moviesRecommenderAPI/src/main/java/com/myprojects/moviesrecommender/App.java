@@ -18,7 +18,5 @@ public class App {
         moviesJDBCTemplate mTemplate = (moviesJDBCTemplate) context.getBean("moviesJDBCTemplate");
         ratingJDBCTemplate rTemplate = (ratingJDBCTemplate) context.getBean("ratingJDBCTemplate");
         tagsJDBCTemplate tTemplate = (tagsJDBCTemplate) context.getBean("tagsJDBCTemplate");
-        recommender reco = (recommender) context.getBean("recommender");
-        reco.recommend();
     }
 }
